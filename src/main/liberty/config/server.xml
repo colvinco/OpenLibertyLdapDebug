@@ -1,0 +1,74 @@
+<server description="Sample Liberty server">
+    <featureManager>
+        <feature>jakartaee-10.0</feature>
+        <feature>ldapRegistry-3.0</feature>
+        <feature>federatedRegistry-1.0</feature>
+    </featureManager>
+
+
+    <variable name="http.port" defaultValue="9080"/>
+    <variable name="https.port" defaultValue="9443"/>
+
+    <webApplication location="guide-getting-started.war" contextRoot="/">
+    <application-bnd>
+      <security-role name="AUTHENTICATED_USER">
+        <special-subject type="ALL_AUTHENTICATED_USERS"/>
+      </security-role>
+    </application-bnd>
+    </webApplication>
+    
+    <mpMetrics authentication="false"/>
+
+    <httpEndpoint host="*" httpPort="${http.port}"
+        httpsPort="${https.port}" id="defaultHttpEndpoint"/>
+
+    <variable name="io_openliberty_guides_system_inMaintenance" value="false"/>
+
+  <ldapRegistry
+    bindDN="cn=admin,dc=example,dc=org"
+    bindPassword="admin" port="389"
+    ignoreCase="true"
+    sslEnabled="false"
+    ldapType="Custom"
+    host="localhost"
+    realm="SampleLdapIDSRealm"
+    id="ldap"
+    baseDN="dc=example,dc=org">
+    <idsFilters
+      groupIdMap="*:cn"
+      groupFilter="(&amp;(cn=%v)(|(objectclass=groupOfNames)(objectclass=posixGroup)))" userIdMap="*:uid"
+      userFilter="(&amp;(uid=%v)(objectclass=inetOrgPerson))"
+      groupMemberIdMap="groupOfNames:member;*:memberUid"/>
+  </ldapRegistry>
+  <federatedRepository>
+    <primaryRealm delimiter="@" name="FedRealm" allowOpIfRepoDown="true">
+      <participatingBaseEntry name="o=WebRealm"/>
+      <participatingBaseEntry name="dc=example,dc=org"/>
+
+      <!-- Standard mappings -->
+      <!--
+      <uniqueUserIdMapping outputProperty="uniqueName" inputProperty="uniqueName"/>
+      <userSecurityNameMapping outputProperty="principalName" inputProperty="principalName"/>
+      <userDisplayNameMapping outputProperty="cn" inputProperty="cn"/>
+      -->
+      <!-- end -->
+
+      <!-- Discrete mappings -->
+      <uniqueUserIdMapping outputProperty="mail" inputProperty="mail"/>
+      <userSecurityNameMapping outputProperty="principalName" inputProperty="principalName"/>
+      <userDisplayNameMapping outputProperty="displayName" inputProperty="displayName"/>
+      <!-- end -->
+
+      <uniqueGroupIdMapping outputProperty="uniqueName" inputProperty="uniqueName"/>
+      <groupSecurityNameMapping outputProperty="cn" inputProperty="cn"/>
+      <groupDisplayNameMapping outputProperty="uniqueName" inputProperty="dn"/>
+    </primaryRealm>
+  </federatedRepository>
+
+  <basicRegistry realm="WebRealm" id="basic">
+    <user name="BasicUserAbc" password="Passw0rd"/>
+    <group name="BasicGroup123">
+      <member name="BasicUserAbc"/>
+    </group>
+  </basicRegistry>
+</server>

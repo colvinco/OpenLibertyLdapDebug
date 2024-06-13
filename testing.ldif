@@ -1,0 +1,35 @@
+dn: uid=billy,dc=example,dc=org
+uid: billy
+cn: billy
+displayName: Billy Bob
+sn: 3
+objectClass: top
+objectClass: posixAccount
+objectClass: inetOrgPerson
+loginShell: /bin/bash
+homeDirectory: /home/billy
+uidNumber: 14583102
+gidNumber: 14564100
+userPassword: Passw0rd
+mail: billy@example.org
+
+dn: uid=Ollie,dc=example,dc=org
+uid: Ollie
+cn: Ollie
+displayName: Ollie's Display Name
+sn: 3
+objectClass: top
+objectClass: posixAccount
+objectClass: inetOrgPerson
+loginShell: /bin/bash
+homeDirectory: /home/Ollie
+uidNumber: 14583108
+gidNumber: 14564106
+userPassword: Passw0rd
+mail: Ollie@example.org
+
+dn: cn=LDAPGroup,dc=example,dc=org
+cn: LDAPGroup
+objectclass: groupofNames
+member: uid=billy,dc=example,dc=org
+member: uid=Ollie,dc=example,dc=org
